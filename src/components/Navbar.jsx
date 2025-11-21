@@ -1,38 +1,53 @@
-import React, { useState, useEffect } from "react";
+// src/components/Navbar.js
+import React, { useEffect, useRef, useState } from "react";
 import "./Navbar.css";
 import logo from "../assets/logo_white.png";
+
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const navRef = useRef(null);
 
-  // Add black blur background on scroll
+  // Blur background on scroll
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Smooth scroll to section
+  // Close mobile menu if screen goes desktop
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth > 900) setMenuOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Prevent background scroll when menu is open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+  }, [menuOpen]);
+
+  // SMOOTH SCROLL WITH OFFSET FOR FIXED NAVBAR
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
-    setMenuOpen(false); // close mobile menu
+    if (!el) return;
+
+    const navHeight = navRef.current?.getBoundingClientRect().height || 0;
+    const top = window.pageYOffset + el.getBoundingClientRect().top - navHeight - 12;
+
+    window.scrollTo({ top, behavior: "smooth" });
+    setMenuOpen(false);
   };
 
   return (
-    <nav className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
+    <nav ref={navRef} className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
       <div className="navbar-container">
         
         {/* LOGO */}
-        <div className="navbar-logo">
-          <img
-            src={logo}
-            alt="Aksher Creatives"
-          />
+        <div className="navbar-logo" onClick={() => scrollToSection("home")}>
+          <img src={logo} alt="Aksher Creatives" />
           <span>Aksher Creatives</span>
         </div>
 
@@ -45,7 +60,7 @@ const Navbar = () => {
           <li onClick={() => scrollToSection("faq")}>FAQ</li>
         </ul>
 
-        {/* Hamburger icon */}
+        {/* Hamburger */}
         <div
           className={`hamburger ${menuOpen ? "active" : ""}`}
           onClick={() => setMenuOpen(!menuOpen)}
@@ -55,10 +70,10 @@ const Navbar = () => {
           <span></span>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile menu */}
         <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
           <p onClick={() => scrollToSection("home")}>Home</p>
-          <p onClick={() => scrollToSection("why")}>Why Aksher</p>
+          <p onClick={() => scrollToSection("about")}>Why Aksher</p>
           <p onClick={() => scrollToSection("testimonials")}>Testimonials</p>
           <p onClick={() => scrollToSection("services")}>What We Do</p>
           <p onClick={() => scrollToSection("faq")}>FAQ</p>

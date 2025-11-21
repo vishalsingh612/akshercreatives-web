@@ -20,8 +20,6 @@
    COUNTERS (full-bleed grid) - robust
    ----------------------------------------- */
 .counters-row {
-  /* JS will set width & marginLeft to be flush to viewport;
-     defensive CSS in case JS runs late */
   width: 100vw;
   box-sizing: border-box;
   padding: 8px 24px;
@@ -32,9 +30,11 @@
   justify-items: center;
   z-index: 1;
   margin: 0;
+  /* don't capture pointer events - allows mobile scrolling */
+  pointer-events: none;
 }
 
-/* each counter element */
+/* each counter element: allow pointer-events on children if needed */
 .counter-item {
   min-width: 0;
   box-sizing: border-box;
@@ -44,6 +44,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  /* allow pointer events on items themselves (in case you want clicks later) */
+  pointer-events: auto;
 
   opacity: 0;
   transform: translateY(8px);
@@ -152,7 +155,7 @@
 
 @media (max-width: 800px) {
   .aboutus-section {
-    padding-top: 10px; /* space for fixed navbar — adjust if your navbar height differs */
+    padding-top: 20px; /* space for fixed navbar — adjust if your navbar height differs */
   }
 
   .counters-row {
@@ -179,7 +182,7 @@
 }
 
 @media (max-width: 420px) {
-  .aboutus-section { padding-top: 10px; }
+  .aboutus-section { padding-top: 140px; }
   .counter-number .count-value { font-size: clamp(18px, 10vw, 40px); }
   .counter-label { font-size: 14px; }
 }

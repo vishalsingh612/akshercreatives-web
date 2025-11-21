@@ -8,8 +8,6 @@ import logo4 from "../assets/logo4.png";
 import logo7 from "../assets/logo7.png";
 import logo10 from "../assets/logo10.png";
 
-
-
 const logos = [logo2, logo3, logo4, logo7, logo10];
 
 const countersConfig = [
@@ -58,7 +56,7 @@ const AboutUs = () => {
   const countersRowRef = useRef(null);
   const [playCounters, setPlayCounters] = useState(false);
 
-  // Start counters when section visible
+  // start counters when section visible
   useEffect(() => {
     const node = sectionRef.current;
     if (!node) return;
@@ -77,45 +75,55 @@ const AboutUs = () => {
     return () => obs.disconnect();
   }, []);
 
-  // Safety-net: compute exact left offset of the section and apply to counters-row
+  // layout safety-net: ensure counters-row is full-bleed and DOES NOT capture pointer events
   useEffect(() => {
     const el = countersRowRef.current;
     const sectionEl = sectionRef.current;
     if (!el || !sectionEl) return;
 
     const applyLayout = () => {
-      // get the section's position relative to the viewport
       const rect = sectionEl.getBoundingClientRect();
-      // We want the counters-row to be full viewport width and flush to left edge,
-      // so set width = window.innerWidth and margin-left = -rect.left
+
+      // width / left to make full-bleed aligned with viewport
       el.style.width = `${window.innerWidth}px`;
       el.style.marginLeft = `${-rect.left}px`;
       el.style.boxSizing = "border-box";
-      // ensure no accidental transform interfering
+
+      // defensive: ensure not transformed or absolute
       el.style.left = "0";
       el.style.transform = "none";
       el.style.position = "relative";
+
+      // IMPORTANT: do not intercept pointer events so touches scroll the page
+      el.style.pointerEvents = "none";
+
+      // but allow children to receive pointer events if needed in future
+      // we set child .counter-item pointer-events to auto via CSS (see AboutUs.css)
     };
 
-    // initial
     applyLayout();
-    // update on resize and on scroll (in case header/responsive changes)
-    window.addEventListener("resize", applyLayout);
-    window.addEventListener("orientationchange", applyLayout);
-    window.addEventListener("scroll", applyLayout, { passive: true });
 
-    // small timeout to handle fonts/late layout
-    const t = setTimeout(applyLayout, 200);
+    // debounce resize to avoid too many calls
+    let resizeTimer = null;
+    const onResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(applyLayout, 80);
+    };
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+
+    // small delayed reapply for late fonts/layout
+    const timeout = setTimeout(applyLayout, 250);
 
     return () => {
-      window.removeEventListener("resize", applyLayout);
-      window.removeEventListener("orientationchange", applyLayout);
-      window.removeEventListener("scroll", applyLayout);
-      clearTimeout(t);
+      clearTimeout(timeout);
+      clearTimeout(resizeTimer);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
     };
   }, []);
 
-  // pause marquee on hover/focus (keyboard accessible)
+  // make marquee pause on hover or focus
   useEffect(() => {
     const m = marqueeRef.current;
     if (!m) return;
@@ -135,7 +143,7 @@ const AboutUs = () => {
 
   return (
     <section className="aboutus-section" id="about" ref={sectionRef}>
-      {/* FULL-BLEED counters row as a direct child of the section */}
+      {/* full-bleed counters row as a direct child of the section */}
       <div className="counters-row" ref={countersRowRef} role="list" aria-label="Key metrics">
         {countersConfig.map((c, i) => (
           <div
@@ -156,7 +164,7 @@ const AboutUs = () => {
         ))}
       </div>
 
-      {/* Centered area for the marquee and rest of content */}
+      {/* centered area for the marquee and rest of content */}
       <div className="aboutus-inner">
         <div className="logos-marquee-wrap" aria-hidden="false">
           <div className="logos-marquee" ref={marqueeRef}>
