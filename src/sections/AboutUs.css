@@ -1,86 +1,115 @@
-/* AboutUs styles — adjusted sizes, slower animation, thicker dividers */
-
+/* strong reset for this section */
 .aboutus-section {
   width: 100%;
   background: #0d1114;
   color: #fff;
-  padding: 48px 24px 72px;
+  padding: 48px 0 72px;
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 
+/* centered inner content for marquee, text etc */
 .aboutus-inner {
   max-width: 1300px;
   margin: 0 auto;
+  padding: 0 18px;
+  box-sizing: border-box;
 }
 
-/* COUNTERS ROW */
+/* -----------------------------------------
+   COUNTERS (full-bleed grid) - robust
+   ----------------------------------------- */
 .counters-row {
-  display: flex;
+  /* JS will set width & marginLeft to be flush to viewport;
+     defensive CSS in case JS runs late */
+  width: 100vw;
+  box-sizing: border-box;
+  padding: 8px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 42px;
-  padding: 10px 8px;
+  justify-items: center;
+  z-index: 1;
+  margin: 0;
 }
 
-/* Each counter cell */
+/* each counter element */
 .counter-item {
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 14px 12px;
+  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 23%;
-  min-width: 150px;
-  text-align: center;
-  padding: 10px 8px;
-  box-sizing: border-box;
+  justify-content: center;
+
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1);
 }
 
-/* large numeric value — reduced size and weight for a lighter look */
+/* visible class toggled when animation should run */
+.counter-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* number */
 .counter-number .count-value {
-  font-size: 78px;       /* decreased from 120px */
+  font-size: clamp(30px, 6.5vw, 78px);
+  font-weight: 700;
   line-height: 1;
-  font-weight: 700;      /* reduced weight */
-  color: #ffffff;
-  letter-spacing: -1px;
+  color: #fff;
+  white-space: nowrap;
+  display: inline-block;
 }
 
-/* subtitle below number */
+/* label */
 .counter-label {
-  margin-top: 10px;
+  margin-top: 8px;
   color: #00a6ff;
-  font-size: 24px;       /* slightly smaller */
+  font-size: clamp(13px, 1.6vw, 22px);
   font-weight: 600;
   line-height: 1.05;
   text-align: center;
+  word-break: break-word;
 }
 
-/* vertical divider — made thicker (wider) and a little taller */
-.counter-divider {
-  width: 3px;            /* increased thickness */
-  height: 90px;          /* increased height */
-  background: linear-gradient(180deg, rgba(0,140,210,0.22), rgba(0,140,210,0.05));
-  margin: 0 16px;
-  flex-shrink: 0;
-  opacity: 0.95;
-  border-radius: 2px;
+/* show dividers only on wide non-wrapped layout (pseudo element) */
+@media (min-width: 1100px) {
+  .counter-item:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: 8%;
+    height: 84%;
+    width: 3px;
+    background: linear-gradient(180deg, rgba(0,140,210,0.22), rgba(0,140,210,0.05));
+    border-radius: 2px;
+    opacity: 0.95;
+  }
 }
 
-/* MARQUEE / LOGOS */
+/* -----------------------------------------
+   MARQUEE / LOGOS
+   ----------------------------------------- */
+
 .logos-marquee-wrap {
   width: 100%;
   overflow: hidden;
-  padding-top: 18px;
+  padding-top: 28px;
   box-sizing: border-box;
-  background: transparent;
+  margin-top: 12px;
 }
 
-/* Create the scrolling strip — use transform animation (longer duration if desired) */
 .logos-marquee {
   display: flex;
   gap: 48px;
   align-items: center;
-  width: calc(200% + 40px); /* duplicated logos for loop */
-  animation: marquee-scroll 20s linear infinite; /* a touch slower */
+  width: calc(200% + 40px);
+  animation: marquee-scroll 18s linear infinite;
   padding: 18px 0;
 }
 
@@ -92,100 +121,71 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 220px;
-  max-width: 240px;
-  height: 72px;
-  opacity: 0.85;
+  min-width: 140px;
+  max-width: 220px;
+  height: 64px;
+  opacity: 0.9;
 }
 
 .logo-item img {
-  max-height: 72px;
+  max-height: 64px;
   max-width: 100%;
   object-fit: contain;
   filter: grayscale(100%) contrast(0.8) opacity(0.9);
-  transform: translateX(0);
 }
 
 @keyframes marquee-scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-/* Responsive tweaks */
+/* -----------------------------------------
+   Responsiveness
+   ----------------------------------------- */
+
 @media (max-width: 1100px) {
-  .counter-number .count-value {
-    font-size: 64px;
-  }
-  .counter-label {
-    font-size: 20px;
-  }
-  .logo-item {
-    min-width: 160px;
-    max-width: 180px;
-    height: 56px;
-  }
-  .logo-item img {
-    max-height: 56px;
-  }
-  .counter-divider {
-    height: 70px;
-    width: 2.5px;
-  }
+  .counters-row { padding-left: 18px; padding-right: 18px; gap: 18px; }
+  .counter-number .count-value { font-size: clamp(28px, 5.2vw, 64px); }
+  .logo-item { min-width: 120px; max-width: 180px; height: 56px; }
+  .logo-item img { max-height: 56px; }
 }
 
 @media (max-width: 800px) {
-  .counters-row {
-    flex-wrap: wrap;
-    gap: 12px;
+  .aboutus-section {
+    padding-top: 10px; /* space for fixed navbar — adjust if your navbar height differs */
   }
 
-  .counter-item {
-    width: 48%;
-    min-width: 0;
-    padding: 8px;
+  .counters-row {
+    padding-left: 16px;
+    padding-right: 16px;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   }
 
   .counter-number .count-value {
-    font-size: 52px;
+    font-size: clamp(22px, 8.5vw, 52px);
+    white-space: nowrap;
   }
 
   .counter-label {
-    font-size: 18px;
-    line-height: 1.1;
+    font-size: 15px;
   }
 
-  .counter-divider {
-    display: none;
-  }
+  .counter-item::before { display: none; }
 
-  .logos-marquee {
-    gap: 28px;
-    animation-duration: 22s;
-  }
-
-  .logo-item {
-    min-width: 120px;
-    max-width: 140px;
-    height: 46px;
-  }
-
-  .logo-item img {
-    max-height: 46px;
-  }
+  .logos-marquee { gap: 28px; animation-duration: 22s; }
+  .logo-item { min-width: 100px; max-width: 140px; height: 46px; }
+  .logo-item img { max-height: 46px; }
 }
 
 @media (max-width: 420px) {
-  .counter-item {
-    width: 100%;
-  }
-  .counter-number .count-value {
-    font-size: 40px;
-  }
-  .counter-label {
-    font-size: 16px;
-  }
+  .aboutus-section { padding-top: 10px; }
+  .counter-number .count-value { font-size: clamp(18px, 10vw, 40px); }
+  .counter-label { font-size: 14px; }
+}
+
+/* final safety: prevent horizontal overflow */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
 }
