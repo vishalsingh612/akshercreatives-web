@@ -1,0 +1,134 @@
+.navbar {
+  position: fixed;
+  width: 100%;
+  top: 20px;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  pointer-events: none; /* so only inner container receives clicks */
+}
+
+.navbar-container {
+  width: 92%;
+  max-width: 1250px;
+
+  padding: 14px 35px;
+
+  /* pill shape */
+  border-radius: 26px;
+
+  /* soft bluish background like screenshot */
+  background: rgba(10, 34, 74, 0.38);
+  backdrop-filter: blur(18px);
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  pointer-events: all; /* clickable again */
+}
+
+/* LOGO */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 15px; /* smaller as screenshot */
+  color: #ffffff;
+  opacity: 0.9;
+}
+
+.navbar-logo img {
+  width: 36px;
+  height: 36px;
+}
+
+/* DESKTOP MENU */
+.navbar-links {
+  display: flex;
+  gap: 32px; 
+  list-style: none;
+}
+
+.navbar-links li {
+  color: #ffffff;
+  opacity: 0.9;
+  cursor: pointer;
+  font-size: 15px; /* smaller */
+  transition: 0.25s;
+}
+
+.navbar-links li:hover {
+  opacity: 1;
+  color: #57b7ff;
+}
+
+/* MOBILE MENU */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 26px;
+  height: 3px;
+  background: white;
+  border-radius: 10px;
+  transition: 0.3s ease;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+.mobile-menu {
+  display: none;
+  position: absolute;
+  right: 25px;
+  top: 74px;
+
+  background: rgba(10, 34, 74, 0.88);
+  backdrop-filter: blur(15px);
+  padding: 20px 25px;
+  border-radius: 15px;
+
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mobile-menu p {
+  color: #ffffff;
+  opacity: 0.9;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.mobile-menu.open {
+  display: flex;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .navbar-links {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .navbar-container {
+    padding: 14px 24px;
+  }
+}

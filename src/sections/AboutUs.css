@@ -1,0 +1,191 @@
+/* AboutUs styles — adjusted sizes, slower animation, thicker dividers */
+
+.aboutus-section {
+  width: 100%;
+  background: #0d1114;
+  color: #fff;
+  padding: 48px 24px 72px;
+  box-sizing: border-box;
+}
+
+.aboutus-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* COUNTERS ROW */
+.counters-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 42px;
+  padding: 10px 8px;
+}
+
+/* Each counter cell */
+.counter-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 23%;
+  min-width: 150px;
+  text-align: center;
+  padding: 10px 8px;
+  box-sizing: border-box;
+}
+
+/* large numeric value — reduced size and weight for a lighter look */
+.counter-number .count-value {
+  font-size: 78px;       /* decreased from 120px */
+  line-height: 1;
+  font-weight: 700;      /* reduced weight */
+  color: #ffffff;
+  letter-spacing: -1px;
+}
+
+/* subtitle below number */
+.counter-label {
+  margin-top: 10px;
+  color: #00a6ff;
+  font-size: 24px;       /* slightly smaller */
+  font-weight: 600;
+  line-height: 1.05;
+  text-align: center;
+}
+
+/* vertical divider — made thicker (wider) and a little taller */
+.counter-divider {
+  width: 3px;            /* increased thickness */
+  height: 90px;          /* increased height */
+  background: linear-gradient(180deg, rgba(0,140,210,0.22), rgba(0,140,210,0.05));
+  margin: 0 16px;
+  flex-shrink: 0;
+  opacity: 0.95;
+  border-radius: 2px;
+}
+
+/* MARQUEE / LOGOS */
+.logos-marquee-wrap {
+  width: 100%;
+  overflow: hidden;
+  padding-top: 18px;
+  box-sizing: border-box;
+  background: transparent;
+}
+
+/* Create the scrolling strip — use transform animation (longer duration if desired) */
+.logos-marquee {
+  display: flex;
+  gap: 48px;
+  align-items: center;
+  width: calc(200% + 40px); /* duplicated logos for loop */
+  animation: marquee-scroll 20s linear infinite; /* a touch slower */
+  padding: 18px 0;
+}
+
+.logos-marquee.paused {
+  animation-play-state: paused;
+}
+
+.logo-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 220px;
+  max-width: 240px;
+  height: 72px;
+  opacity: 0.85;
+}
+
+.logo-item img {
+  max-height: 72px;
+  max-width: 100%;
+  object-fit: contain;
+  filter: grayscale(100%) contrast(0.8) opacity(0.9);
+  transform: translateX(0);
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Responsive tweaks */
+@media (max-width: 1100px) {
+  .counter-number .count-value {
+    font-size: 64px;
+  }
+  .counter-label {
+    font-size: 20px;
+  }
+  .logo-item {
+    min-width: 160px;
+    max-width: 180px;
+    height: 56px;
+  }
+  .logo-item img {
+    max-height: 56px;
+  }
+  .counter-divider {
+    height: 70px;
+    width: 2.5px;
+  }
+}
+
+@media (max-width: 800px) {
+  .counters-row {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .counter-item {
+    width: 48%;
+    min-width: 0;
+    padding: 8px;
+  }
+
+  .counter-number .count-value {
+    font-size: 52px;
+  }
+
+  .counter-label {
+    font-size: 18px;
+    line-height: 1.1;
+  }
+
+  .counter-divider {
+    display: none;
+  }
+
+  .logos-marquee {
+    gap: 28px;
+    animation-duration: 22s;
+  }
+
+  .logo-item {
+    min-width: 120px;
+    max-width: 140px;
+    height: 46px;
+  }
+
+  .logo-item img {
+    max-height: 46px;
+  }
+}
+
+@media (max-width: 420px) {
+  .counter-item {
+    width: 100%;
+  }
+  .counter-number .count-value {
+    font-size: 40px;
+  }
+  .counter-label {
+    font-size: 16px;
+  }
+}
