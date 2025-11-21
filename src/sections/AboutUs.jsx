@@ -8,10 +8,9 @@ import logo4 from "../assets/logo4.png";
 import logo7 from "../assets/logo7.png";
 import logo10 from "../assets/logo10.png";
 
-// fallback/test logo (uploaded image path)
-const fallbackLogo = "/mnt/data/527b4c1e-2396-4ea1-9cef-dee340110636.png";
 
-const logos = [logo2, logo3, logo4, logo7, logo10, fallbackLogo];
+
+const logos = [logo2, logo3, logo4, logo7, logo10];
 
 const countersConfig = [
   { id: "c1", value: 300, suffix: "+", label: "Short Form\nVideos Generated" },
