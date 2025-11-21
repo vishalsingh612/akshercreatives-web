@@ -7,7 +7,38 @@
   display: flex;
   align-items: center;
   background: radial-gradient(circle at bottom, #00142b 0%, #08080a 70%);
-  /* allow column switch on mobile cleanly */
+}
+
+/* ---------------------------------------
+   STRONGER WHITE GRAIN (visible + clean)
+   --------------------------------------- */
+.hero-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+
+  /* 3-layer soft but visible grain */
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+
+  background-size:
+    3px 3px,
+    2px 2px,
+    1px 1px;
+
+  opacity: 0.22; /* VISIBLE */
+  mix-blend-mode: overlay;
+}
+
+/* slightly softer grain for mobile */
+@media (max-width: 900px) {
+  .hero-section::after {
+    opacity: 0.16;
+  }
 }
 
 /* LEFT CONTENT */
@@ -72,7 +103,6 @@
   object-fit: cover;
   opacity: 0;
   display: block;
-
 }
 
 /* TOP BLUE RIBBON */
@@ -106,8 +136,7 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-
-    padding-top: 120px; /* ADDED: clean space before heading */
+    padding-top: 120px;
     min-height: auto;
   }
 
@@ -115,8 +144,7 @@
     width: 100%;
     padding-left: 20px;
     padding-right: 20px;
-
-    margin-top: 10px; /* ADDED: space above text block */
+    margin-top: 10px;
     order: 1;
   }
 
@@ -131,8 +159,7 @@
     height: auto;
     order: 2;
     display: block;
-
-    margin-top: 25px; /* spacing between text & image */
+    margin-top: 25px;
     padding: 0 20px 40px;
   }
 
@@ -141,7 +168,7 @@
     height: auto;
     max-height: 42vh;
     object-fit: cover;
-    opacity: 0.;
+    opacity: 0;
     border-radius: 6px;
     display: block;
   }

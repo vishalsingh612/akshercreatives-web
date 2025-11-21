@@ -175,6 +175,11 @@
   }
 
   .counter-item::before { display: none; }
+  .counter-item {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 
   .logos-marquee { gap: 28px; animation-duration: 22s; }
   .logo-item { min-width: 100px; max-width: 140px; height: 46px; }
@@ -182,7 +187,7 @@
 }
 
 @media (max-width: 420px) {
-  .aboutus-section { padding-top: 140px; }
+  .aboutus-section { padding-top: 20px; }
   .counter-number .count-value { font-size: clamp(18px, 10vw, 40px); }
   .counter-label { font-size: 14px; }
 }

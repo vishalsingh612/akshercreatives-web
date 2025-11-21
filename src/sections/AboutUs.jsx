@@ -17,12 +17,27 @@ const countersConfig = [
   { id: "c4", value: 4, suffix: "+", label: "Years In\nVideo Editing" },
 ];
 
-const CountUp = ({ end, suffix = "", play = false, duration = 2200 }) => {
+/**
+ * CountUp now supports `animate` boolean.
+ * If animate === false it immediately renders the end value.
+ */
+const CountUp = ({ end, suffix = "", play = false, animate = true, duration = 2200 }) => {
   const [value, setValue] = useState(0);
   const ranRef = useRef(false);
 
   useEffect(() => {
-    if (!play || ranRef.current) return;
+    if (!play) {
+      // not allowed to start yet — show 0 until play becomes true
+      return;
+    }
+
+    if (!animate) {
+      // mobile: immediately set final value (no animation)
+      setValue(end);
+      return;
+    }
+
+    if (ranRef.current) return;
     ranRef.current = true;
 
     const frames = Math.min(90, Math.ceil(duration / 16));
@@ -40,7 +55,7 @@ const CountUp = ({ end, suffix = "", play = false, duration = 2200 }) => {
     }, duration / frames);
 
     return () => clearInterval(id);
-  }, [play, end, duration]);
+  }, [play, animate, end, duration]);
 
   return (
     <span className="count-value" aria-live="polite">
@@ -54,12 +69,41 @@ const AboutUs = () => {
   const marqueeRef = useRef(null);
   const sectionRef = useRef(null);
   const countersRowRef = useRef(null);
-  const [playCounters, setPlayCounters] = useState(false);
 
-  // start counters when section visible
+  // playCounters: tells CountUp to start (or show finals on mobile)
+  const [playCounters, setPlayCounters] = useState(false);
+  // isMobile toggles behaviour
+  const [isMobile, setIsMobile] = useState(false);
+
+  // detect mobile / small screens and update on resize
   useEffect(() => {
+    const mq = window.matchMedia("(max-width: 800px)");
+    const setFromMq = () => setIsMobile(mq.matches);
+    setFromMq();
+    mq.addEventListener?.("change", setFromMq);
+    // fallback for older browsers:
+    const onResize = () => setFromMq();
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      mq.removeEventListener?.("change", setFromMq);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
+  // start counters:
+  // - on desktop: when section intersects (keep animation)
+  // - on mobile: start immediately (no animation)
+  useEffect(() => {
+    if (isMobile) {
+      // show final values immediately on mobile
+      setPlayCounters(true);
+      return;
+    }
+
     const node = sectionRef.current;
     if (!node) return;
+
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -71,9 +115,10 @@ const AboutUs = () => {
       },
       { threshold: 0.35 }
     );
+
     obs.observe(node);
     return () => obs.disconnect();
-  }, []);
+  }, [isMobile]);
 
   // layout safety-net: ensure counters-row is full-bleed and DOES NOT capture pointer events
   useEffect(() => {
@@ -83,27 +128,17 @@ const AboutUs = () => {
 
     const applyLayout = () => {
       const rect = sectionEl.getBoundingClientRect();
-
-      // width / left to make full-bleed aligned with viewport
       el.style.width = `${window.innerWidth}px`;
       el.style.marginLeft = `${-rect.left}px`;
       el.style.boxSizing = "border-box";
-
-      // defensive: ensure not transformed or absolute
       el.style.left = "0";
       el.style.transform = "none";
       el.style.position = "relative";
-
-      // IMPORTANT: do not intercept pointer events so touches scroll the page
       el.style.pointerEvents = "none";
-
-      // but allow children to receive pointer events if needed in future
-      // we set child .counter-item pointer-events to auto via CSS (see AboutUs.css)
     };
 
     applyLayout();
 
-    // debounce resize to avoid too many calls
     let resizeTimer = null;
     const onResize = () => {
       clearTimeout(resizeTimer);
@@ -112,7 +147,6 @@ const AboutUs = () => {
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onResize);
 
-    // small delayed reapply for late fonts/layout
     const timeout = setTimeout(applyLayout, 250);
 
     return () => {
@@ -147,13 +181,19 @@ const AboutUs = () => {
       <div className="counters-row" ref={countersRowRef} role="list" aria-label="Key metrics">
         {countersConfig.map((c, i) => (
           <div
-            className={`counter-item ${playCounters ? "visible" : ""}`}
+            className={`counter-item ${playCounters && !isMobile ? "visible" : ""}`}
             role="listitem"
             key={c.id}
             style={{ transitionDelay: `${i * 120}ms` }}
           >
             <div className="counter-number">
-              <CountUp end={c.value} suffix={c.suffix} play={playCounters} duration={2600} />
+              <CountUp
+                end={c.value}
+                suffix={c.suffix}
+                play={playCounters}
+                animate={!isMobile}
+                duration={2600}
+              />
             </div>
             <div className="counter-label">
               {c.label.split("\n").map((line, idx) => (
